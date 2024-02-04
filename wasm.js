@@ -48,13 +48,11 @@ function keycode(key) {
 }
 
 function platform_fill_rect(x, y, width, height, color) {
-		console.log(x, y, width, height, color);
 		ctx.fillStyle = color_hex(color);
 		ctx.fillRect(x, y, width, height);
 }
 
 function platform_fill_text(x, y, text_ptr, size, color) {
-	console.log(x, y, text_ptr, size, color);
 	const buffer = wasm.instance.exports.memory.buffer;
 	const text = cstr_by_ptr(buffer, text_ptr);
 
@@ -84,7 +82,6 @@ WebAssembly
 				wasm = w;
 
 				document.addEventListener('keyup', event => {
-					console.log(event.key);
 					wasm.instance.exports.handle_key(keycode(event.key));
 				})
 

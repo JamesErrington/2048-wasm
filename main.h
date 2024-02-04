@@ -3,10 +3,23 @@
 
 #include <stdint.h>
 
+#define STB_SPRINTF_IMPLEMENTATION
+#include "lib/stb_sprintf.h"
+
 typedef uint8_t  u8;
-typedef int32_t  i32;
 typedef uint32_t u32;
 typedef uint64_t u64;
+typedef int32_t  i32;
+
+#define TRUE  1
+#define FALSE 0
+
+static char log_buffer[4096] = {0};
+#define LOGF(...) \
+	do { \
+	    stbsp_snprintf(log_buffer, sizeof(log_buffer), __VA_ARGS__); \
+	    platform_log(log_buffer); \
+	} while(0)
 
 typedef struct Rect {
 	float x, y, w, h;
@@ -27,44 +40,17 @@ static inline u32 RGB(u8 r, u8 g, u8 b) {
 	return RGBA(r, g, b, 0xFF);
 }
 
-#define RAND_A 6364136223846793005ULL
-#define RAND_C 1442695040888963407ULL
+static u32 lcg_parkmiller(u32 *state) {
+    return *state = (u64)*state * 48271 % 0x7fffffff;
+}
 
 static u32 rand() {
-	static u64 state = 0;
-	state = state * RAND_A + RAND_C;
-	return (state >> 32) & 0xFFFFFFFF;
+	static u32 state = 50022;
+	return lcg_parkmiller(&state);
 }
 
 static inline u32 init_square_value() {
 	return 2 << (rand() % 2);
-}
-
-#define TWO_COLOR RGB(238, 228, 218)
-#define TWO_TEXT_COLOR RGB(119, 110, 101)
-#define FOUR_COLOR RGB(238, 225, 201)
-#define FOUR_TEXT_COLOR RGB(119, 110, 101)
-
-static inline u32 square_color(u32 value) {
-	switch (value) {
-		case 2:
-			return TWO_COLOR;
-		case 4:
-			return FOUR_COLOR;
-		default:
-			return RGB(0xFF, 0, 0);
-	}
-}
-
-static inline const char *square_text(u32 value) {
-	switch (value) {
-		case 2:
-			return "2";
-		case 4:
-			return "4";
-		default:
-			return "?";
-	}
 }
 
 #define ARROW_LEFT 37
@@ -76,5 +62,47 @@ typedef struct Game {
 	u32 score;
 	u32 grid[16];
 } Game;
+
+typedef struct Square {
+	u32 bg_color;
+	u32 text_color;
+	const char *text;
+} Square;
+
+#define TWO_COLOR RGB(0xee, 0xe4, 0xda)
+#define FOUR_COLOR RGB(0xee, 0xe1, 0xc9)
+#define EIGHT_COLOR RGB(0xf3, 0xb2, 0x7a)
+
+#define TEXT_COLOR_1 RGB(119, 110, 101)
+#define TEXT_COLOR_2 RGB(0xf9, 0xf6, 0xf2)
+
+
+
+static Square square_info(u32 value) {
+	Square square;
+	switch (value) {
+		case 2:
+			square.bg_color = TWO_COLOR;
+			square.text_color = TEXT_COLOR_1;
+			square.text = "2";
+			break;
+		case 4:
+			square.bg_color = FOUR_COLOR;
+			square.text_color = TEXT_COLOR_1;
+			square.text = "4";
+			break;
+		case 8:
+			square.bg_color = EIGHT_COLOR;
+			square.text_color = TEXT_COLOR_2;
+			square.text = "8";
+			break;
+		default:
+			LOGF("PANIC! Invalid square value %d", value);
+	}
+
+	return square;
+}
+
+
 
 #endif
