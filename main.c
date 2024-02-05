@@ -206,7 +206,7 @@ void handle_key(int key) {
 				inited++;
 			}
 		}
-	}
 
-	draw_grid();
+		draw_grid();
+	}
 }

@@ -1,7 +1,7 @@
 SRC_FILE := main
 BUILD_DIR := build
 CFLAGS := -Wall -Wextra -O3 -nostdlib -fno-builtin
-LFLAGS := -flto -Wl,--export=init -Wl,--export=handle_key -Wl,--no-entry -Wl,--lto-O3 -Wl,--allow-undefined
+LFLAGS := -flto -Wl,--export=init -Wl,--export=handle_key -Wl,--export=render -Wl,--no-entry -Wl,--lto-O3 -Wl,--allow-undefined
 
 compile: main.c
 	mkdir -p ${BUILD_DIR}
