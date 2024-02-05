@@ -25,8 +25,13 @@ static u32 lcg_parkmiller(u32 *state) {
     return *state = (u64)*state * 48271 % 0x7fffffff;
 }
 
+static u32 state = 50022;
+
+static void srand(u32 seed) {
+	state = seed;
+}
+
 static u32 rand() {
-	static u32 state = 50022;
 	return lcg_parkmiller(&state);
 }
 

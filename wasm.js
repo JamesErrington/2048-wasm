@@ -82,8 +82,14 @@ WebAssembly
 				wasm = w;
 
 				document.addEventListener('keyup', event => {
-					wasm.instance.exports.handle_key(keycode(event.key));
+					const result = wasm.instance.exports.handle_key(keycode(event.key));
+					if (result > 0) {
+						setTimeout(() => {
+							alert("You won!");
+							wasm.instance.exports.init(Date.now());
+						}, 0)
+					}
 				})
 
-				wasm.instance.exports.init();
+				wasm.instance.exports.init(Date.now());
 		});
