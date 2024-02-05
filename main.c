@@ -11,7 +11,6 @@
 
 #define BOX_SIZE ((GRID_SIZE - (5 * GRID_PADDING)) / NUM_ROW_SQUARES)
 #define BOX_COLOR RGBA(238, 228, 218, 0.35 * 255)
-#define BOX_FONT_SIZE 55
 
 static Game game = {0};
 
@@ -41,7 +40,7 @@ static void draw_grid() {
 				GRID_OFFSET_X + ((x + 1) * GRID_PADDING) + (x * BOX_SIZE) + (BOX_SIZE / 2),
 				GRID_OFFSET_Y + ((y + 1) * GRID_PADDING) + (y * BOX_SIZE) + (BOX_SIZE / 2),
 				square.text,
-				BOX_FONT_SIZE,
+				square.text_size,
 				square.text_color
 			);
 		}
@@ -123,6 +122,73 @@ void handle_key(int key) {
 
 				j -= 1;
 				if ((j % NUM_ROW_SQUARES != 0) && i != j) {
+					moved = TRUE;
+					game.grid[j] = game.grid[i];
+					game.grid[i] = 0;
+				}
+			}
+		} break;
+		case ARROW_LEFT: {
+			int order[NUM_GRID_SQUARES] = {12, 8, 4, 0, 13, 9, 5, 1, 14, 10, 6, 2, 15, 11, 7, 3};
+			for (int n = 0; n < NUM_GRID_SQUARES; n++) {
+				int i = order[n];
+
+				if (game.grid[i] == 0 || (i % NUM_ROW_SQUARES == 0)) continue;
+
+				int j = i - 1;
+				int x = j % NUM_ROW_SQUARES, y = j / NUM_ROW_SQUARES;
+				for (; x >= 0 && game.grid[j] == 0; x--) {
+					j = y * NUM_ROW_SQUARES + x;
+				}
+
+				if (game.grid[j] == 0) {
+					moved = TRUE;
+					game.grid[j] = game.grid[i];
+					game.grid[i] = 0;
+
+					continue;
+				} else if (game.grid[j] == game.grid[i]) {
+					moved = TRUE;
+					game.grid[j] = game.grid[i] * 2;
+					game.grid[i] = 0;
+
+					continue;
+				}
+
+				j += 1;
+				if ((j % NUM_ROW_SQUARES != 3) && i != j) {
+					moved = TRUE;
+					game.grid[j] = game.grid[i];
+					game.grid[i] = 0;
+				}
+			}
+		} break;
+		case ARROW_UP: {
+			int order[NUM_GRID_SQUARES] = {4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+			for (int n = 0; n < NUM_GRID_SQUARES - NUM_ROW_SQUARES; n++) {
+				int i = order[n];
+
+				if (game.grid[i] == 0) continue;
+
+				int j = i - NUM_ROW_SQUARES;
+				for (; j >= NUM_ROW_SQUARES && game.grid[j] == 0; j -= NUM_ROW_SQUARES) {}
+
+				if (game.grid[j] == 0) {
+					moved = TRUE;
+					game.grid[j] = game.grid[i];
+					game.grid[i] = 0;
+
+					continue;
+				} else if (game.grid[j] == game.grid[i]) {
+					moved = TRUE;
+					game.grid[j] = game.grid[i] * 2;
+					game.grid[i] = 0;
+
+					continue;
+				}
+
+				j += NUM_ROW_SQUARES;
+				if (j < NUM_GRID_SQUARES - 1 && j != i) {
 					moved = TRUE;
 					game.grid[j] = game.grid[i];
 					game.grid[i] = 0;
