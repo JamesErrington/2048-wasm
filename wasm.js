@@ -71,7 +71,7 @@ function platform_log(text_ptr) {
 }
 
 WebAssembly
-		.instantiateStreaming(fetch('build/main.wasm'), {
+		.instantiateStreaming(fetch('build/game.wasm'), {
 				env: {
 						platform_fill_rect,
 						platform_fill_text,

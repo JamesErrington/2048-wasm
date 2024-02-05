@@ -1,18 +1,10 @@
-#include "./main.h"
-
-#define NUM_ROW_SQUARES 4
-#define NUM_GRID_SQUARES (NUM_ROW_SQUARES * NUM_ROW_SQUARES)
-
-#define GRID_OFFSET_X 10
-#define GRID_OFFSET_Y 10
-#define GRID_SIZE 470
-#define GRID_PADDING 15
-#define GRID_COLOR RGB(187, 173, 160)
-
-#define BOX_SIZE ((GRID_SIZE - (5 * GRID_PADDING)) / NUM_ROW_SQUARES)
-#define BOX_COLOR RGBA(238, 228, 218, 0.35 * 255)
+#include "game.h"
 
 static Game game = {0};
+
+typedef struct Rect {
+	float x, y, w, h;
+} Rect;
 
 static void fill_rect(Rect rect, u32 color) {
 	platform_fill_rect(rect.x, rect.y, rect.w, rect.h, color);

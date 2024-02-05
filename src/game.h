@@ -1,29 +1,7 @@
-#ifndef JAMESE_WASM_TEST_H
-#define JAMESE_WASM_TEST_H
+#ifndef JAMESE_2048_GAME_H
+#define JAMESE_2048_GAME_H
 
-#include <stdint.h>
-
-#define STB_SPRINTF_IMPLEMENTATION
-#include "lib/stb_sprintf.h"
-
-typedef uint8_t  u8;
-typedef uint32_t u32;
-typedef uint64_t u64;
-typedef int32_t  i32;
-
-#define TRUE  1
-#define FALSE 0
-
-static char log_buffer[4096] = {0};
-#define LOGF(...) \
-	do { \
-	    stbsp_snprintf(log_buffer, sizeof(log_buffer), __VA_ARGS__); \
-	    platform_log(log_buffer); \
-	} while(0)
-
-typedef struct Rect {
-	float x, y, w, h;
-} Rect;
+#include "util.h"
 
 void platform_fill_rect(i32 x, i32 y, i32 w, i32 h, u32 c);
 void platform_fill_text(i32 x, i32 y, const char *text, u32 size, u32 color);
@@ -40,15 +18,6 @@ static inline u32 RGB(u8 r, u8 g, u8 b) {
 	return RGBA(r, g, b, 0xFF);
 }
 
-static u32 lcg_parkmiller(u32 *state) {
-    return *state = (u64)*state * 48271 % 0x7fffffff;
-}
-
-static u32 rand() {
-	static u32 state = 50022;
-	return lcg_parkmiller(&state);
-}
-
 static inline u32 init_square_value() {
 	return 2 << (rand() % 2);
 }
@@ -57,6 +26,10 @@ static inline u32 init_square_value() {
 #define ARROW_UP 38
 #define ARROW_RIGHT 39
 #define ARROW_DOWN 40
+
+typedef struct GridState {
+
+} GridState;
 
 typedef struct Game {
 	u32 score;
@@ -69,6 +42,18 @@ typedef struct Square {
 	u32 text_size;
 	const char *text;
 } Square;
+
+#define NUM_ROW_SQUARES 4
+#define NUM_GRID_SQUARES (NUM_ROW_SQUARES * NUM_ROW_SQUARES)
+
+#define GRID_OFFSET_X 10
+#define GRID_OFFSET_Y 10
+#define GRID_SIZE 470
+#define GRID_PADDING 15
+#define GRID_COLOR RGB(187, 173, 160)
+
+#define BOX_SIZE ((GRID_SIZE - (5 * GRID_PADDING)) / NUM_ROW_SQUARES)
+#define BOX_COLOR RGBA(238, 228, 218, 0.35 * 255)
 
 #define VALUE_COLOR_2 RGB(0xee, 0xe4, 0xda)
 #define VALUE_COLOR_4 RGB(0xee, 0xe1, 0xc9)
@@ -165,7 +150,5 @@ static Square square_info(u32 value) {
 
 	return square;
 }
-
-
 
 #endif
