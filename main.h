@@ -72,6 +72,7 @@ typedef struct Square {
 #define TWO_COLOR RGB(0xee, 0xe4, 0xda)
 #define FOUR_COLOR RGB(0xee, 0xe1, 0xc9)
 #define EIGHT_COLOR RGB(0xf3, 0xb2, 0x7a)
+#define SIXTEEN_COLOR RGB(0xf6, 0x96, 0x64)
 
 #define TEXT_COLOR_1 RGB(119, 110, 101)
 #define TEXT_COLOR_2 RGB(0xf9, 0xf6, 0xf2)
@@ -81,23 +82,29 @@ typedef struct Square {
 static Square square_info(u32 value) {
 	Square square;
 	switch (value) {
-		case 2:
+		case 2: {
 			square.bg_color = TWO_COLOR;
 			square.text_color = TEXT_COLOR_1;
 			square.text = "2";
-			break;
-		case 4:
+		} break;
+		case 4: {
 			square.bg_color = FOUR_COLOR;
 			square.text_color = TEXT_COLOR_1;
 			square.text = "4";
-			break;
-		case 8:
+		} break;
+		case 8: {
 			square.bg_color = EIGHT_COLOR;
 			square.text_color = TEXT_COLOR_2;
 			square.text = "8";
-			break;
-		default:
+		} break;
+		case 16: {
+			square.bg_color = SIXTEEN_COLOR;
+			square.text_color = TEXT_COLOR_2;
+			square.text = "16";
+		} break;
+		default: {
 			LOGF("PANIC! Invalid square value %d", value);
+		} break;
 	}
 
 	return square;

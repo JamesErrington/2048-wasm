@@ -62,9 +62,10 @@ void init() {
 }
 
 void handle_key(int key) {
+	int moved = FALSE;
+
 	switch (key) {
 		case ARROW_DOWN: {
-			int moved = FALSE;
 			for (int i = NUM_GRID_SQUARES - NUM_ROW_SQUARES - 1; i >= 0; i--) {
 				if (game.grid[i] == 0) continue;
 
@@ -92,19 +93,54 @@ void handle_key(int key) {
 					game.grid[i] = 0;
 				}
 			}
+		} break;
+		case ARROW_RIGHT: {
+			int order[NUM_GRID_SQUARES] = {3, 7, 11, 15, 2, 6, 10, 14, 1, 5, 9, 13, 0, 4, 8, 12};
+			for (int n = 0; n < NUM_GRID_SQUARES; n++) {
+				int i = order[n];
 
-			if (moved) {
-				int inited = 0;
-				while (inited < 1) {
-					u32 i = rand() % NUM_GRID_SQUARES;
-					if (game.grid[i] == 0) {
-						game.grid[i] = init_square_value();
-						inited++;
-					}
+				if (game.grid[i] == 0 || (i % NUM_ROW_SQUARES == 3)) continue;
+
+				int j = i + 1;
+				int x = j % NUM_ROW_SQUARES, y = j / NUM_ROW_SQUARES;
+				for (; x < NUM_ROW_SQUARES && game.grid[j] == 0; x++) {
+					j = y * NUM_ROW_SQUARES + x;
+				}
+
+				if (game.grid[j] == 0) {
+					moved = TRUE;
+					game.grid[j] = game.grid[i];
+					game.grid[i] = 0;
+
+					continue;
+				} else if (game.grid[j] == game.grid[i]) {
+					moved = TRUE;
+					game.grid[j] = game.grid[i] * 2;
+					game.grid[i] = 0;
+
+					continue;
+				}
+
+				j -= 1;
+				if ((j % NUM_ROW_SQUARES != 0) && i != j) {
+					moved = TRUE;
+					game.grid[j] = game.grid[i];
+					game.grid[i] = 0;
 				}
 			}
-
-			draw_grid();
 		} break;
 	}
+
+	if (moved) {
+		int inited = 0;
+		while (inited < 1) {
+			u32 i = rand() % NUM_GRID_SQUARES;
+			if (game.grid[i] == 0) {
+				game.grid[i] = init_square_value();
+				inited++;
+			}
+		}
+	}
+
+	draw_grid();
 }
