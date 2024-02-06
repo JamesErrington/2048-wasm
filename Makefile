@@ -9,7 +9,7 @@ compile: ${SRC_DIR}/${SRC_FILE}.c
 	clang ${CFLAGS} ${LFLAGS} --target=wasm32 -o ${BUILD_DIR}/${SRC_FILE}.wasm $<
 
 serve:
-	python3 -m http.server 8080
+	python3 -m http.server 8000
 
 clean:
 	rm -rf ${BUILD_DIR}
